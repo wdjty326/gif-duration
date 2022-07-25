@@ -11,6 +11,8 @@ const {
 const { ESBuildMinifyPlugin } = require('esbuild-loader');
 // const SpeedMeasureWebpackPlugin = require('speed-measure-webpack-plugin');
 
+//const WorkerPlugin = require('worker-plugin');
+
 const removeMinimizer = (webpackConfig, name) => {
 	const idx = webpackConfig.optimization.minimizer.findIndex(
 		(m) => m.constructor.name === name
@@ -39,6 +41,8 @@ module.exports = {
 		configure: (webpackConfig, { paths }) => {
 			const useTypeScript = fs.existsSync(paths.appTsConfig);
 
+			const tsconfigRaw = fs.readFileSync('./tsconfig.json', { encoding: 'utf-8' });
+
 			// esbuild-loader 추가
 			addAfterLoader(webpackConfig, loaderByName('babel-loader'), {
 				test: /\.(js|mjs|jsx|ts|tsx)$/,
@@ -47,7 +51,7 @@ module.exports = {
 				options: {
 						loader: useTypeScript ? 'tsx' : 'jsx',
 						target: 'es2015',
-						tsconfigRaw: require('./tsconfig.json'),
+						tsconfigRaw: tsconfigRaw || require('./tsconfig.json'),
 				},
 			});
 
