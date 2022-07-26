@@ -2,6 +2,8 @@
 
 위 프로젝트는 esbuild-loader 를 적용한 CRA 템플릿 입니다.
 
+[데모 바로가기](https://wdjty326.github.io/gif-duration/)
+
 ## 사용가능한 명령어
 
 위 프로젝트는 아래에 정의된 명령어를 사용하실 수 있습니다.

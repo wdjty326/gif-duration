@@ -31,11 +31,9 @@ const App: FunctionComponent = () => {
 
 			console.log(file, value, idx);
             cloneFileList.splice(idx, 1, file);
-            //setFileList(cloneFileList);
-			return cloneFileList;
-          })
-		  .then((value) => console.log(value));
-          file.duration = -1; // loadedstart
+            setFileList(cloneFileList);
+		});
+		  file.duration = -1; // loadedstart
         }
 
         return file;
