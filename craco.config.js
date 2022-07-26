@@ -27,8 +27,11 @@ const replaceMinimizer = (webpackConfig, name, minimizer) => {
 	idx > -1 && webpackConfig.optimization.minimizer.splice(idx, 1, minimizer);
 };
 
+if (process.env.NODE_ENV === 'production') process.env.PUBLIC_URL = '/gif-duration';
+
 module.exports = {
 	reactScriptsVersion: 'react-scripts',
+	publicPath: process.env.PUBLIC_URL,
 	webpack: {
 		plugins: {
 			// tsconfig.json `react-jsx` 옵션 미동작 해결

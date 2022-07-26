@@ -98,6 +98,6 @@
 	},
 	"include": [
 		"src/**/*.ts",
-		"src/**/*.tsx", "src/gif.js",
+		"src/**/*.tsx", "public/gif.js",
 	]
 }
