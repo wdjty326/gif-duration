@@ -36,3 +36,29 @@
 		transform: rotate(360deg);
 	}
 }
+
+.App-List {
+	background-color: #282c34;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	font-size: calc(10px + 2vmin);
+	color: white;
+}
+
+.App-Item {
+	display: grid;
+	grid-template-columns: 1fr max-content auto;
+	column-gap: 20px;
+	align-items: center;
+	padding: 20px;
+
+	> img {
+		max-height: 100px;
+	}
+
+	> label {
+		text-align: left;
+	}
+}
+

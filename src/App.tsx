@@ -6,9 +6,7 @@ import { useState } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
 
-console.log(importScripts("gif.js"));
-//console.log(new URL("./gif.js", window.location.origin));
-const worker = new WebWorker(new URL("./gif.js", window.location.origin));
+const worker = new WebWorker(`${process.env.PUBLIC_URL}/worker.js`);
 worker.connect();
 
 interface FileData {
@@ -18,28 +16,38 @@ interface FileData {
 }
 
 const App: FunctionComponent = () => {
+  //  const [isDrag, setIsDrag] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
 
   useEffect(() => {
     const updateCount = fileList.filter((file) => file.duration === -2).length;
 
     if (updateCount > 0) {
-      const updateList = fileList.map((file) => {
+      const updateList = fileList.map((file, idx) => {
         if (file.duration === -2) {
-			worker.postMessage(file)
-				.then((value) => {
+          worker.postMessage(file).then((value) => {
+            const cloneFileList = fileList.concat([]);
+            file.duration = value;
 
-				});
-			file.duration = -1;
+			console.log(file, value, idx);
+            cloneFileList.splice(idx, 1, file);
+            //setFileList(cloneFileList);
+			return cloneFileList;
+          })
+		  .then((value) => console.log(value));
+          file.duration = -1; // loadedstart
         }
 
-		return file;
+        return file;
       });
+
+      setFileList(updateList);
     }
   }, [fileList]);
 
   const dropHandler = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+
     const files: FileData[] = [];
 
     const pushFile = (file: File | null) => {
@@ -47,7 +55,7 @@ const App: FunctionComponent = () => {
         files.push({
           blobURL: URL.createObjectURL(file),
           fileName: file.name,
-          duration: -2, // unload
+          duration: -2, // unloaded
         });
       }
     };
@@ -70,27 +78,36 @@ const App: FunctionComponent = () => {
   }, []);
 
   return (
-    <div className="App" onDrop={dropHandler}>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      {fileList.map((file) => {
-        return <div>
-			<label>{file.fileName}</label>
-			<img src={file.blobURL} />
-		</div>;
-      })}
+    <div
+      className={["App"].join(" ")}
+      onDrop={dropHandler}
+      onDragOver={(e) => {
+        // allow drop
+        e.preventDefault();
+      }}
+    >
+      {fileList.length === 0 ? (
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <p>Drop Files Here</p>
+        </header>
+      ) : (
+        <div className="App-List">
+          {fileList.map((file) => {
+            return (
+              <div className="App-Item">
+                <label>{file.fileName}</label>
+                <span>
+                  {file.duration !== -2 &&
+                    file.duration !== -1 &&
+                    `${file.duration / 1000}s`}
+                </span>
+                <img src={file.blobURL} alt="" />
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
