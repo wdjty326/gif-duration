@@ -37,8 +37,34 @@
 	}
 }
 
+.App-Menu {
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: #1d2026;
+	height: 8vh;
+	width: 100%;
+
+	> .App-logo {
+		position: relative;
+		left: -3vw;
+		vertical-align: middle;
+		height: 100%;
+	}
+
+	> span {
+		display: inline-block;
+		vertical-align: middle;
+		color: #fff;
+		left: -3vw;
+		position: relative;
+	} 
+}
+
 .App-List {
 	background-color: #282c34;
+	top: 8vh;
+	position: relative;
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
@@ -49,12 +75,13 @@
 .App-Item {
 	display: grid;
 	grid-template-columns: 1fr max-content auto;
-	column-gap: 20px;
+	column-gap: 1vmax;
 	align-items: center;
-	padding: 20px;
+	padding: 1vmax;
 
 	> img {
-		max-height: 100px;
+		max-width: 10vmax;
+		max-height: 20vmax;
 	}
 
 	> label {

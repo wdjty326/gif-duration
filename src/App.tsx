@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import React, { FunctionComponent, useMemo } from "react";
 import WebWorker from "./webWorker";
 import logo from "./logo.svg";
 import "./App.scss";
@@ -11,6 +11,7 @@ worker.connect();
 
 interface FileData {
   fileName: string;
+  fileType: string;
   blobURL: string;
   duration: number;
 }
@@ -29,11 +30,11 @@ const App: FunctionComponent = () => {
             const cloneFileList = fileList.concat([]);
             file.duration = value;
 
-			console.log(file, value, idx);
+            console.log(file, value, idx);
             cloneFileList.splice(idx, 1, file);
             setFileList(cloneFileList);
-		});
-		  file.duration = -1; // loadedstart
+          });
+          file.duration = -1; // loadedstart
         }
 
         return file;
@@ -42,6 +43,35 @@ const App: FunctionComponent = () => {
       setFileList(updateList);
     }
   }, [fileList]);
+
+  const clickHandler = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const input = document.createElement("input");
+    input.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files) {
+        const files: FileData[] = [];
+
+        for (let i = 0; i < target.files.length; i++) {
+          const file = target.files[i];
+          files.push({
+            blobURL: URL.createObjectURL(file),
+            fileName: file.name,
+            fileType: file.type,
+            duration: -2, // unloaded
+          });
+        }
+
+        setFileList((prev) => [...prev, ...files]);
+      }
+    };
+
+    input.type = "file";
+    input.accept = "image/gif";
+    input.multiple = true;
+    input.click();
+  }, []);
 
   const dropHandler = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -53,6 +83,7 @@ const App: FunctionComponent = () => {
         files.push({
           blobURL: URL.createObjectURL(file),
           fileName: file.name,
+          fileType: file.type,
           duration: -2, // unloaded
         });
       }
@@ -77,7 +108,8 @@ const App: FunctionComponent = () => {
 
   return (
     <div
-      className={["App"].join(" ")}
+      className={["App", fileList.length ? "App-Uploaded" : ""].join(" ")}
+      onClick={clickHandler}
       onDrop={dropHandler}
       onDragOver={(e) => {
         // allow drop
@@ -90,21 +122,27 @@ const App: FunctionComponent = () => {
           <p>Drop Files Here</p>
         </header>
       ) : (
-        <div className="App-List">
-          {fileList.map((file) => {
-            return (
-              <div className="App-Item">
-                <label>{file.fileName}</label>
-                <span>
-                  {file.duration !== -2 &&
-                    file.duration !== -1 &&
-                    `${file.duration / 1000}s`}
-                </span>
-                <img src={file.blobURL} alt="" />
-              </div>
-            );
-          })}
-        </div>
+        <React.Fragment>
+          <div className="App-Menu">
+            <img src={logo} className="App-logo" alt="logo" />
+            <span>Gif Duration</span>
+          </div>
+          <div className="App-List">
+            {fileList.map((file, idx) => {
+              return (
+                <div className="App-Item" key={`App-Item-${idx}`}>
+                  <label>{file.fileName}</label>
+                  <span>
+                    {file.duration !== -2 &&
+                      file.duration !== -1 &&
+                      `${file.duration / 1000}s`}
+                  </span>
+                  <img src={file.blobURL} alt="" />
+                </div>
+              );
+            })}
+          </div>
+        </React.Fragment>
       )}
     </div>
   );

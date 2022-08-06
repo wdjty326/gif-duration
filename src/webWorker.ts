@@ -37,6 +37,14 @@ export default class WebWorker {
    * @returns
    */
   public postMessage<T = any, K = any>(message: K, transfer?: Transferable[]) {
+    const uid = Math.ceil(Math.random() * Date.now());
+    interface MessageData {
+      message: T;
+      uid: number;
+    }
+
+	console.log(uid);
+
     return new Promise<T>((resolve, reject) => {
       if (this.worker) {
         const onClear = () => {
@@ -46,20 +54,23 @@ export default class WebWorker {
           }
         };
 
-        const onMessage = (ev: MessageEvent<T>) => {
-          resolve(ev.data);
+        const onMessage = (ev: MessageEvent<MessageData>) => {
+          console.log(ev.data);
+          if (ev.data.uid !== uid) return;
+          resolve(ev.data.message);
           onClear();
         };
 
-        const onMessageError = (ev: MessageEvent<T>) => {
-          reject(ev.data);
+        const onMessageError = (ev: MessageEvent<MessageData>) => {
+          if (ev.data.uid !== uid) return;
+          resolve(ev.data.message);
           onClear();
         };
 
         this.worker.addEventListener("message", onMessage);
         this.worker.addEventListener("messageerror", onMessageError);
         // @ts-ignore: Unreachable code error
-        this.worker.postMessage(message, transfer);
+        this.worker.postMessage({ uid, message: message }, transfer);
       }
     });
   }

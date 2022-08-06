@@ -1,8 +1,9 @@
 onmessage = (ev) => {
-  const { blobURL, fileName } = ev.data;
-  gifDuration(blobURL, fileName).then((value) => {
-    postMessage(value);
-  });
+  const { uid, message } = ev.data;
+  const { blobURL, fileName } = message;
+  gifDuration(blobURL, fileName).then((value) =>
+    postMessage({ uid, message: value })
+  );
 };
 
 const gifDuration = (blobURL, fileName) => {
