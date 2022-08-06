@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "GIF duration",
+  "name": "Do you know the time of gif?",
   "icons": [
     {
       "src": "favicon.ico",
