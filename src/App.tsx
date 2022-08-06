@@ -125,7 +125,7 @@ const App: FunctionComponent = () => {
         <React.Fragment>
           <div className="App-Menu">
             <img src={logo} className="App-logo" alt="logo" />
-            <span>Gif Duration</span>
+            <span>GIF duration</span>
           </div>
           <div className="App-List">
             {fileList.map((file, idx) => {
