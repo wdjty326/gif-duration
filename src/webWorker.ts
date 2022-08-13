@@ -43,8 +43,6 @@ export default class WebWorker {
       uid: number;
     }
 
-	console.log(uid);
-
     return new Promise<T>((resolve, reject) => {
       if (this.worker) {
         const onClear = () => {
@@ -55,7 +53,6 @@ export default class WebWorker {
         };
 
         const onMessage = (ev: MessageEvent<MessageData>) => {
-          console.log(ev.data);
           if (ev.data.uid !== uid) return;
           resolve(ev.data.message);
           onClear();

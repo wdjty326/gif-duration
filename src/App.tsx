@@ -30,7 +30,6 @@ const App: FunctionComponent = () => {
             const cloneFileList = fileList.concat([]);
             file.duration = value;
 
-            console.log(file, value, idx);
             cloneFileList.splice(idx, 1, file);
             setFileList(cloneFileList);
           });
