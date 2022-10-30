@@ -1,23 +1,15 @@
-import React, { FunctionComponent, useMemo } from "react";
-import WebWorker from "./webWorker";
-import logo from "./logo.svg";
-import "./App.scss";
-import { useState } from "react";
-import { useCallback } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import FileData from "@defines/FileData";
+import { DragEvent, MouseEvnet } from "@defines/Functions";
+
+
+import WebWorker from "@libs/webWorker";
 
 const worker = new WebWorker(`${process.env.PUBLIC_URL}/worker.js`);
 worker.connect();
 
-interface FileData {
-  fileName: string;
-  fileType: string;
-  blobURL: string;
-  duration: number;
-}
-
-const App: FunctionComponent = () => {
-  //  const [isDrag, setIsDrag] = useState<boolean>(false);
+/** 파일 업로드 객체 훅 */
+export default function useFileList(): [FileData[], MouseEvnet, DragEvent] {
   const [fileList, setFileList] = useState<FileData[]>([]);
 
   useEffect(() => {
@@ -42,8 +34,9 @@ const App: FunctionComponent = () => {
       setFileList(updateList);
     }
   }, [fileList]);
-
-  const clickHandler = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  
+  // 파일 업로드 클릭 이벤트 입니다.
+  const clickHandler: MouseEvnet = (e) => {
     e.preventDefault();
 
     const input = document.createElement("input");
@@ -70,9 +63,10 @@ const App: FunctionComponent = () => {
     input.accept = "image/gif";
     input.multiple = true;
     input.click();
-  }, []);
+  };
 
-  const dropHandler = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  // 파일 드랍 이벤트 입니다.
+  const dropHandler: DragEvent = (e) => {
     e.preventDefault();
 
     const files: FileData[] = [];
@@ -103,48 +97,7 @@ const App: FunctionComponent = () => {
     }
 
     if (files.length !== 0) setFileList((prev) => [...prev, ...files]);
-  }, []);
+  };
 
-  return (
-    <div
-      className={["App", fileList.length ? "App-Uploaded" : ""].join(" ")}
-      onClick={clickHandler}
-      onDrop={dropHandler}
-      onDragOver={(e) => {
-        // allow drop
-        e.preventDefault();
-      }}
-    >
-      {fileList.length === 0 ? (
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>Drop Files Here</p>
-        </header>
-      ) : (
-        <React.Fragment>
-          <div className="App-Menu">
-            <img src={logo} className="App-logo" alt="logo" />
-            <span>GIF duration</span>
-          </div>
-          <div className="App-List">
-            {fileList.map((file, idx) => {
-              return (
-                <div className="App-Item" key={`App-Item-${idx}`}>
-                  <label>{file.fileName}</label>
-                  <span>
-                    {file.duration !== -2 &&
-                      file.duration !== -1 &&
-                      `${file.duration / 1000}s`}
-                  </span>
-                  <img src={file.blobURL} alt="" />
-                </div>
-              );
-            })}
-          </div>
-        </React.Fragment>
-      )}
-    </div>
-  );
-};
-
-export default App;
+  return [fileList, clickHandler, dropHandler];
+}

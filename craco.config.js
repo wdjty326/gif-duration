@@ -1,4 +1,5 @@
 const { ProvidePlugin } = require('webpack');
+const CracoAlias = require('craco-alias');
 
 const fs = require('fs');
 const {
@@ -149,4 +150,14 @@ module.exports = {
 			return jestConfig;
 		},
 	},
+	plugins: [
+		{
+			plugin: CracoAlias,
+			options: {
+				source: "tsconfig",
+				baseUrl: "./",
+				tsConfigPath: "./tsconfig.path.json"
+			},
+		}
+	]
 };
