@@ -14,6 +14,27 @@ const { ESBuildMinifyPlugin } = require('esbuild-loader');
 
 //const WorkerPlugin = require('worker-plugin');
 
+const defaultSplitChunks = {
+	cacheGroups: {
+		default: {
+			minChunks: 2,
+			priority: -20,
+			reuseExistingChunk: true,
+		},
+	},
+};
+
+// 캐시청크추가
+const addCacheGroups = (webpackConfig, name, options) => {
+	if (typeof webpackConfig.optimization.splitChunks === "undefined")
+		webpackConfig.optimization.splitChunks = defaultSplitChunks;
+
+	if (typeof webpackConfig.optimization.splitChunks.cacheGroups === "undefined")
+		webpackConfig.optimization.splitChunks.cacheGroups = defaultSplitChunks.cacheGroups;
+
+	webpackConfig.optimization.splitChunks.cacheGroups[name] = options;
+};
+
 const removeMinimizer = (webpackConfig, name) => {
 	const idx = webpackConfig.optimization.minimizer.findIndex(
 		(m) => m.constructor.name === name
@@ -28,7 +49,7 @@ const replaceMinimizer = (webpackConfig, name, minimizer) => {
 	idx > -1 && webpackConfig.optimization.minimizer.splice(idx, 1, minimizer);
 };
 
-if (process.env.NODE_ENV === 'production') process.env.PUBLIC_URL = '/gif-duration';
+if (!process.env.PUBLIC_URL && process.env.NODE_ENV === 'production') process.env.PUBLIC_URL = '/gif-duration';
 
 module.exports = {
 	reactScriptsVersion: 'react-scripts',
@@ -89,6 +110,14 @@ module.exports = {
 			// removePlugins(webpackConfig, pluginByName('MiniCssExtractPlugin'));
 			// webpackConfig = new SpeedMeasureWebpackPlugin().wrap(webpackConfig);
 			// webpackConfig.plugins.push(...plugins);
+			
+			if (webpackConfig.optimization.splitChunks) {
+				addCacheGroups(webpackConfig, "defaultVendors", {
+					test: /[\\/]node_modules[\\/]/,
+					priority: -10,
+					reuseExistingChunk: true,
+				});
+			}
 
 			return webpackConfig;
 		},

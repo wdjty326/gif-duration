@@ -1,12 +1,14 @@
 {
 	"extends": "./tsconfig.path.json",
 	"compilerOptions": {
-		"target": "ES6",
+		"target": "ES5",
 		"lib": [
 			"ESNext",
 			"WebWorker"
 		],
 		"jsx": "react-jsx",
+
+		"outDir": "./build",
 
 		"module": "CommonJS",
 		"allowJs": true,
