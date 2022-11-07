@@ -20,14 +20,21 @@ function pipeline (command, args, options) {
 
 // 서버 실행
 pipeline('yarn', ['build'], {
-	cwd: path.resolve(__dirname, '..'),
+	cwd: path.resolve(__dirname, '..', '..'),
 	stdio: 'pipe',
 	env: {
 		PUBLIC_URL: "./",
+		ELECTRON_BUILD: path.resolve(__dirname, '..', 'build'),
 	},
+}).then(() => {
+	return pipeline('tsc', ['-p', '.'], {
+		cwd: path.resolve(__dirname, '..'),
+		stdio: 'pipe',	
+	})
 }).then(() => {
 	// 클라이언트 실행
 	return pipeline('electron-builder', ['--win'], {
+		cwd: path.resolve(__dirname, '..'),
 		stdio: 'pipe',
 	})
 });

@@ -64,6 +64,10 @@ module.exports = {
 			],
 		},
 		configure: (webpackConfig, { paths }) => {
+			if (process.env.ELECTRON_BUILD) {
+				paths.appBuild = webpackConfig.output.path = process.env.ELECTRON_BUILD;
+			}
+
 			const useTypeScript = fs.existsSync(paths.appTsConfig);
 
 			const tsconfigRaw = fs.readFileSync('./tsconfig.json', { encoding: 'utf-8' });

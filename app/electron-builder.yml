@@ -1,0 +1,8 @@
+appId: 'wdjty326.github.gifduration'
+productName: 'GIF duration'
+files:
+  - build
+  - dist
+asar: true
+directories:
+  output: 'package'

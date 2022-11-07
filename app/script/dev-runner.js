@@ -15,11 +15,18 @@ function pipeline (command, args, options) {
 
 // 서버 실행
 pipeline('yarn', ['start'], {
+	cwd: path.resolve(__dirname, '..', '..'),
+	stdio: 'pipe',
+});
+
+// tsc watch
+pipeline('tsc', ['--watch'], {
 	cwd: path.resolve(__dirname, '..'),
 	stdio: 'pipe',
 });
 
 // 클라이언트 실행
 pipeline('electron', ['.'], {
+	cwd: path.resolve(__dirname, '..'),
 	stdio: 'pipe',
 });

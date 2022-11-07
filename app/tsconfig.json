@@ -1,19 +1,14 @@
 {
-	"extends": "./tsconfig.path.json",
 	"compilerOptions": {
 		"target": "ES5",
 		"lib": [
 			"ESNext",
 			"WebWorker"
 		],
-		"jsx": "react-jsx",
-
-		"outDir": "./build",
-
 		"module": "CommonJS",
 		"allowJs": true,
+		"outDir": "./dist",
 
-		"noEmit": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 
@@ -23,7 +18,9 @@
 		"skipLibCheck": true
 	},
 	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx"
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
 	]
 }

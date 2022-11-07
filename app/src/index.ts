@@ -1,11 +1,9 @@
-//import { app, BrowserWindow } from "electron";
-//import path from "path";
-const { app, BrowserWindow } = require("electron");
-const url = require("url");
-const path = require("path");
+import { app, BrowserWindow } from 'electron';
+import * as path from 'path';
+import * as dotenv from 'dotenv';
 
 // 환경변수 읽기
-require("dotenv").config();
+dotenv.config();
 
 function createWindow() {
   const window = new BrowserWindow({
@@ -13,17 +11,10 @@ function createWindow() {
     height: 600,
   });
 
-//  window.loadURL(
-//    url.format({
-//      pathname: path.join(__dirname, "..", "..", "build", "index.html"),
-//      protocol: "file:",
-//      slashes: true,
-//    })
-//  );
-
-  window.loadFile(
-    path.join(__dirname, "..", "build", "index.html")
-  );
+  if (process.env.DEBUG === 'true')
+	window.loadURL(`http://${process.env.HOST}:${process.env.PORT}`);
+  else
+  	window.loadFile(path.resolve(__dirname, '..', 'build', 'index.html'));	// 빌드파일위치
 }
 
 app.on("ready", () => {
