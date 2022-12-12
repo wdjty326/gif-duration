@@ -91,6 +91,8 @@ export function useDropHandler(
 /** 파일 업로드 객체 훅 */
 export default function useFileList() {
   const [fileList, setFileList] = useState<FileData[]>([]);
+  const clickHandler = useClickHandler(setFileList);
+  const dropHandler = useDropHandler(setFileList);
 
   useEffect(() => {
     const updateCount = fileList.filter((file) => file.duration === -2).length;
@@ -117,6 +119,7 @@ export default function useFileList() {
 
   return {
 	fileList,
-	setFileList,
+	clickHandler,
+	dropHandler,
   };
 }
