@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { v1 } from "uuid";
 import logo from "@assets/logo.svg";
-import useFileList from "@hooks/useFileList";
+import useFileList, { useClickHandler, useDropHandler } from "@hooks/useFileList";
 
 import StyledApp, {
   StyledAppHeader,
@@ -12,7 +12,9 @@ import StyledApp, {
 } from "@styles/App";
 
 const App: FunctionComponent = () => {
-  const [fileList, clickHandler, dropHandler] = useFileList();
+  const { fileList, setFileList } = useFileList();
+  const clickHandler = useClickHandler(setFileList);
+  const dropHandler = useDropHandler(setFileList);
 
   return (
     <StyledApp
